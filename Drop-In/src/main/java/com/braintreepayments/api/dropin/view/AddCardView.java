@@ -89,6 +89,9 @@ public class AddCardView extends LinearLayout implements OnCardFormSubmitListene
         if (!unionpaySupported) {
             cardTypes.remove(PaymentMethodType.UNIONPAY.getCanonicalName());
         }
+
+        cardTypes.remove(PaymentMethodType.MAESTRO.getCanonicalName()); //we filter out Maestro to not confuse the users
+
         mSupportedCardTypes = PaymentMethodType.getCardsTypes(cardTypes);
         mSupportedCardTypesView.setSupportedCardTypes(mSupportedCardTypes);
 
