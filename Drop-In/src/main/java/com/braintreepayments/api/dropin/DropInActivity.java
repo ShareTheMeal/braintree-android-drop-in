@@ -42,10 +42,12 @@ import com.braintreepayments.api.interfaces.BraintreeResponseListener;
 import com.braintreepayments.api.interfaces.ConfigurationListener;
 import com.braintreepayments.api.interfaces.PaymentMethodNonceCreatedListener;
 import com.braintreepayments.api.interfaces.PaymentMethodNoncesUpdatedListener;
+import com.braintreepayments.api.models.AndroidPayCardNonce;
 import com.braintreepayments.api.models.CardNonce;
 import com.braintreepayments.api.models.Configuration;
 import com.braintreepayments.api.models.PaymentMethodNonce;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static android.view.animation.AnimationUtils.loadAnimation;
@@ -256,11 +258,18 @@ public class DropInActivity extends BaseActivity implements ConfigurationListene
 
     @Override
     public void onPaymentMethodNoncesUpdated(List<PaymentMethodNonce> paymentMethodNonces) {
-        if (paymentMethodNonces.size() > 0) {
+        List<PaymentMethodNonce> filteredPaymentMethodNonces = new ArrayList<>(paymentMethodNonces);
+        for (PaymentMethodNonce paymentMethodNonce : paymentMethodNonces) {
+            if (paymentMethodNonce instanceof AndroidPayCardNonce) {
+                filteredPaymentMethodNonces.remove(paymentMethodNonce);
+            }
+        }
+
+        if (filteredPaymentMethodNonces.size() > 0) {
             mSupportedPaymentMethodsHeader.setText(R.string.bt_other);
             mVaultedPaymentMethodsContainer.setVisibility(View.VISIBLE);
             mVaultedPaymentMethodsView.setAdapter(new VaultedPaymentMethodsAdapter(this,
-                    paymentMethodNonces));
+                    filteredPaymentMethodNonces));
         } else {
             mSupportedPaymentMethodsHeader.setText(R.string.bt_select_payment_method);
         }
